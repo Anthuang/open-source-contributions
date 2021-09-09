@@ -58,13 +58,10 @@ func printOutput(repoToPRs RepoToPRs) {
 		fmt.Printf("## %s\n", repo)
 
 		for _, pr := range prs {
-			closedDate := pr.Node.PullRequest.ClosedAt.Time
-
 			fmt.Printf(
-				"- [%s](%s): %v\n",
+				"- [%s](%s)\n",
 				pr.Node.PullRequest.Title,
 				pr.Node.PullRequest.Url,
-				closedDate.Format("01/02/2006"),
 			)
 		}
 	}
