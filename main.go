@@ -53,9 +53,9 @@ func publicPRs(prs []PullRequestNode) []PullRequestNode {
 }
 
 func printOutput(repoToPRs RepoToPRs) {
-	fmt.Println("# Open Source Contributions")
+	fmt.Println("## Open Source Contributions")
 	for repo, prs := range repoToPRs {
-		fmt.Printf("## %s\n", repo)
+		fmt.Printf("%s\n", repo)
 
 		for _, pr := range prs {
 			fmt.Printf(
@@ -64,6 +64,7 @@ func printOutput(repoToPRs RepoToPRs) {
 				pr.Node.PullRequest.Url,
 			)
 		}
+		fmt.Println("")
 	}
 }
 
