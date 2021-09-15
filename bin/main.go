@@ -5,45 +5,16 @@ import (
 	fmt "fmt"
 	"os"
 
+	"github.com/anthuang/open-source-contributions/internal/contributions"
 	"github.com/joho/godotenv"
 	"github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"
 )
 
-type PullRequestNode struct {
-	Node struct {
-		PullRequest struct {
-			Title      string
-			Url        string
-			Repository struct {
-				Name       string
-				Url        string
-				Visibility githubv4.RepositoryVisibility
-			}
-			Closed   bool
-			ClosedAt githubv4.DateTime
-		}
-	}
-}
+type RepoToPRs map[string][]contributions.PullRequestNode
 
-var query struct {
-	Viewer struct {
-		ContributionsCollection struct {
-			PullRequestContributions struct {
-				PageInfo struct {
-					EndCursor   githubv4.String
-					HasNextPage bool
-				}
-				Edges []PullRequestNode
-			} `graphql:"pullRequestContributions(first: 100, after: $cursor)"`
-		}
-	}
-}
-
-type RepoToPRs map[string][]PullRequestNode
-
-func publicPRs(prs []PullRequestNode) []PullRequestNode {
-	var publicPrs []PullRequestNode
+func publicPRs(prs []contributions.PullRequestNode) []contributions.PullRequestNode {
+	var publicPrs []contributions.PullRequestNode
 	for _, pr := range prs {
 		if pr.Node.PullRequest.Repository.Visibility == githubv4.RepositoryVisibilityPublic {
 			publicPrs = append(publicPrs, pr)
@@ -84,6 +55,10 @@ func main() {
 		"cursor": (*githubv4.String)(nil),
 	}
 	repoToPRs := RepoToPRs{}
+
+	var query struct {
+		Viewer contributions.Viewer
+	}
 
 	for {
 		if err := client.Query(context.Background(), &query, variables); err != nil {
